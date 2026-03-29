@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanzas Personales - Dashboard</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="assets/icon.svg">
+</head>
+<body class="dark-theme">
+    <div class="background-animation"></div>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-title">
+                <h1>Mi Panel Financiero</h1>
+                <p>Resumen Mensual</p>
+            </div>
+            <div class="header-actions">
+                <button id="add-transaction-btn" class="btn primary-btn"><i class="fas fa-plus"></i> Nueva Transacción</button>
+            </div>
+        </header>
+
+        <!-- Resumen de Tarjetas -->
+        <section class="summary-cards">
+            <div class="card balance-card">
+                <div class="card-icon"><i class="fas fa-wallet"></i></div>
+                <div class="card-details">
+                    <h3>Balance Total</h3>
+                    <h2 id="total-balance">$0.00</h2>
+                </div>
+            </div>
+            <div class="card income-card">
+                <div class="card-icon"><i class="fas fa-arrow-down"></i></div>
+                <div class="card-details">
+                    <h3>Ingresos</h3>
+                    <h2 id="total-income">$0.00</h2>
+                </div>
+            </div>
+            <div class="card expense-card">
+                <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
+                <div class="card-details">
+                    <h3>Gastos</h3>
+                    <h2 id="total-expense">$0.00</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content (Chart & Recent Transactions) -->
+        <div class="main-content">
+            <!-- Gráfico -->
+            <section class="chart-section glass-panel">
+                <h3>Balance del Mes por Categorías</h3>
+                <div class="chart-container">
+                    <canvas id="financeChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Historial -->
+            <section class="history-section glass-panel">
+                <div class="history-header">
+                    <h3>Movimientos Recientes</h3>
+                    <!-- <a href="#" class="view-all">Ver todos</a> -->
+                </div>
+                <div class="transaction-list" id="transaction-list">
+                    <!-- Las transacciones se renderizarán aquí -->
+                    <div class="loading">Cargando movimientos...</div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal: Nueva Transacción -->
+    <div class="modal-overlay" id="transaction-modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Registrar Movimiento</h2>
+                <button class="close-modal" id="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="transaction-form">
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <div class="type-toggle">
+                        <input type="radio" id="type-income" name="type" value="ingreso" checked>
+                        <label for="type-income" class="toggle-btn income-btn">Ingreso</label>
+                        <input type="radio" id="type-expense" name="type" value="gasto">
+                        <label for="type-expense" class="toggle-btn expense-btn">Gasto</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Monto ($)</label>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Categoría</label>
+                    <select id="category" required>
+                        <option value="" disabled selected>Selecciona una categoría</option>
+                        <optgroup label="Ingresos" id="income-categories">
+                            <option value="Salario">Salario</option>
+                            <option value="Negocio">Negocio</option>
+                            <option value="Inversiones">Inversiones</option>
+                            <option value="Otros Ingresos">Otros Ingresos</option>
+                        </optgroup>
+                        <optgroup label="Gastos" id="expense-categories" style="display:none;">
+                            <option value="Comida">Comida</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Vivienda">Vivienda</option>
+                            <option value="Suscripciones">Suscripciones</option>
+                            <option value="Entretenimiento">Entretenimiento</option>
+                            <option value="Otros Gastos">Otros Gastos</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción</label>
+                    <input type="text" id="description" placeholder="Ej. Compra de supermercado" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Fecha</label>
+                    <input type="date" id="date" required>
+                </div>
+
+                <button type="submit" class="btn submit-btn" id="submit-btn-text">
+                    <span>Guardar Transacción</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notificaciones Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
